@@ -158,7 +158,8 @@ and the library used for their simulation are packaged.
 There are other feature to define the rate of a transition, apart of the Mass Action.
 
 It is possible to write direclty in the GUI simple expression so that the rate of the exponential 
-distribution will be defined by the general function. The functionalities allow to read a constant from a file
+distribution will be defined by the general function. These will be general transitions (Pernice et al. 2019).
+The functionalities allow to read a constant from a file
 where the numbers are written in list or matrix form and to directly use the marking of the places.
 Specifically, the avaialable features are:
 
@@ -235,10 +236,9 @@ Petri Net with Infection's rate defined with FromList and the marking of the pla
 
 
 Notice that *model.generation()* might take as input parameter a C++
-file defining the functions characterizing the behavior of general
-transitions (Pernice et al. 2019), namely *transitions\_fname*. For
-instance, if we want to define the transition *Infection* as a general
-transition then we have to set as the rate of the transition the
+file defining the functions characterizing the behavior of general transitions, namely *transitions\_fname*. For
+instance, if we want to define the transition *Infection* with an external function
+then we have to set as the rate of the transition the
 instruction **Call**. This function allows one to call an external function
 written by the user on a file. It takes as parameters:
 <ol>
@@ -261,15 +261,14 @@ specific behavior of the transition and save it, for instance in a file
 named *transition.cpp*, which has to be structured as follow:
 
 
-    static double Infection_rate = 1.428;
-
     double InfectionFunction(double *Value,
                              map <string,int>& NumTrans,
                              map <string,int>& NumPlaces,
                              const vector<string> & NameTrans,
                              const struct InfTr* Trans,
                              const int T,
-                             const double& time)
+                             const double& time,
+                             double Infection_rate)
     {
 
         // Definition of the function exploited to calculate the rate,
@@ -306,7 +305,7 @@ where the fixed input parameters are:
     (*Trans\[T\].InPlaces\[k\].Card*). (2) ….
 -   **const int T**: index of the firing transition;
 -   **const double& time** : time.
--   Any **additional parameters** must be added at the end of these standards, in the same order as written within the call.
+-   Any **additional parameters** must be added at the end of these standards, in the same order as written within the call (in the example the double Infection_rate)
 
 Notice that the function name has to correspond to the function name
 passed inside the **Call**, in this case
