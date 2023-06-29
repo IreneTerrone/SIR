@@ -118,11 +118,22 @@ are the possible events happening in the system. Variables and events
 variable(s) is (are) affected by a specific event. For more details we
 refer to (Marsan et al. 1995).
 
-Therefore, as represented in figure , we add one place for each variable
+To define the rate of the transition there are different way that differentiate transitions into two groups. 
+
+
+
+
+
+#### Standard Transition
+
+As represented in figure, we add one place for each variable
 of the system (i.e., S, I, and R represent the susceptible, infected,
 and recovered individuals respectively), and one transition for each
-possible event (i.e., *Infection* and *Recovery*). Finally, we save the
-PN model as a file with extension *.PNPRO* .
+possible event (i.e., *Infection* and *Recovery*). At each transition is associated
+a negative exponential distribution which represent the firing rate of the transition, and
+its rate is expressed with the Mass Action law. 
+The rate of the Mass Action can be written directly inside the GUI as shown in the figure.
+Finally, we save the PN model as a file with extension *.PNPRO* .
 
 <img src="./Images/SIRPNPRO.png" alt="\label{fig:SIR_PN} Petri Net representation of the SIR model." width="1327" />
 <p class="caption">
@@ -141,6 +152,87 @@ derives the processes.
 
 The binary file *SIR.solver* is generated in which the derived processes
 and the library used for their simulation are packaged.
+
+#### More complex transition
+
+There are other feature to define the rate of a transition, apart of the Mass Action.
+
+It is possible to write direclty in the GUI simple expression so that the rate of the exponential 
+distribution will be defined by the general function. The functionalities allow to read a constant from a file
+where the numbers are written in list or matrix form and to directly use the marking of the places.
+Specifically, the avaialable features are:
+
+
+-    *#*:  This function allows to use the marking value of a place.
+
+          #S * #I * #R
+
+
+
+-   *FromList*: This function allows to extract a single constant from a list
+of real numbers separated by a newline and written on a file. It takes as parameters 1) a string which
+ represents the name of the file and 2) an integer representing
+the index of the position of the constant in the file.
+
+        SIRFile:
+        3
+        5
+        16
+        8
+        9
+        1
+
+        FromList["SIRFile", 1] = 5
+
+
+-   *FromTable*: This function allows to extract a single constant from a
+real number matrix written on a file where each number is separated
+by a comma and each row is separated by a newline. It takes as
+parameters 1) a string which represents the name of the file 2) an integer, the index of the row where
+the number is located, 3) a second integer that is the index of the column.
+
+
+        SIRFile:
+        3,9,13
+        5,56,7		
+        16,0,1		
+        8,90,23	
+        1,44,88	
+
+        FromTable["SIRFile", 3,2] = 23
+
+    
+-    *FromTimeTable*: This function is similar to FromTable, but it works
+on a file which contain a numeric matrix where the first column symbolize
+a list of time steps as a list of numbers sorting in ascending order. The
+function takes as parameters 1) a string which represents the name
+of the file 2) an integer that is the time we are interested in and based on which
+we will extract the index of the row. The exact value of time
+may not be present in the first column so the index of the row is
+selected as the position of the first value lower than the one passed
+as parameter. 3) An integer representing the index of the
+column of the matrix.
+
+            SIRFile:
+            3,9,13
+            5,56,7		
+            8,0,1		
+            16,90,23	
+            33,44,88	
+
+            FromTimeTable["SIRFile", 1,1] = 13
+            FromTimeTable["BSIRFile", 10,1] = 1	
+            FromTimeTable["SIRFile", 50,1] = 88
+
+<img src="./Images/SIR_FromList2.png" alt="\label{fig:SIR_PN} Petri Net representation of the SIR model." width="1327" />
+<p class="caption">
+Petri Net with Infection's rate defined with FromList and the marking of the place S.
+</p>
+
+
+
+
+
 
 Notice that *model.generation()* might take as input parameter a C++
 file defining the functions characterizing the behavior of general
@@ -220,70 +312,6 @@ Notice that the function name has to correspond to the function name
 passed inside the **Call**, in this case
 *InfectionFunction*.
 
-There are other feature to define the rate of a general transition, which allow to read 
-a constant from a file where the numbers are written in list or matrix form. The functionalities are:
-
-
-
--   *FromList*: This function allows to extract a single constant from a list
-of real numbers separated by a newline and written on a file. It takes as parameters 1) a string which
- represents the name of the file and 2) an integer representing
-the index of the position of the constant in the file.
-
-        SIRFile:
-        3
-        5
-        16
-        8
-        9
-        1
-
-        FromList["SIRFile", 1] = 5
-
-
--   *FromTable*: This function allows to extract a single constant from a
-real number matrix written on a file where each number is separated
-by a comma and each row is separated by a newline. It takes as
-parameters 1) a string which represents the name of the file 2) an integer, the index of the row where
-the number is located, 3) a second integer that is the index of the column.
-
-
-        SIRFile:
-        3,9,13
-        5,56,7		
-        16,0,1		
-        8,90,23	
-        1,44,88	
-
-        FromTable["SIRFile", 3,2] = 23
-
-    
--    *FromTimeTable*: This function is similar to FromTable, but it works
-on a file which contain a numeric matrix where the first column symbolize
-a list of time steps as a list of numbers sorting in ascending order. The
-function takes as parameters 1) a string which represents the name
-of the file 2) an integer that is the time we are interested in and based on which
-we will extract the index of the row. The exact value of time
-may not be present in the first column so the index of the row is
-selected as the position of the first value lower than the one passed
-as parameter. 3) An integer representing the index of the
-column of the matrix.
-
-            SIRFile:
-            3,9,13
-            5,56,7		
-            8,0,1		
-            16,90,23	
-            33,44,88	
-
-            FromTimeTable["SIRFile", 1,1] = 13
-            FromTimeTable["BSIRFile", 10,1] = 1	
-            FromTimeTable["SIRFile", 50,1] = 88
-
-<img src="./Images/SIR_FromList2.png" alt="\label{fig:SIR_PN} Petri Net representation of the SIR model." width="1327" />
-<p class="caption">
-Petri Net with Infection's rate defined with FromList.
-</p>
 
 Finally, the process can be derived be the *model.generation()* function
 as follow.
@@ -481,9 +509,7 @@ ranking calculation then the **distance\_measure** and
                                    s_time = 1, # days  
                                    parallel_processors = 2
     )
-
-    #> [1] "[experiment.env_setup] Setting up environment"
-    #> [1] "[experiment.env_setup] Done setting up environment"
+t] Setting up environment"    #> [1] "[experiment.env_setup] Done setting up environment"
     #> docker run --privileged=true  --user=501:20 --cidfile=dockerID --volume /Users/simonepernice/Desktop/GIT/Modelli_GreatMod/SIR:/home/docker/data -d qbioturin/epimod-sensitivity:1.0.0 Rscript /usr/local/lib/R/site-library/epimod/R_scripts/sensitivity.mngr.R /home/docker/data/SIR_sensitivity/params_SIR-sensitivity.RDS
     #> 
     #> 
@@ -625,78 +651,8 @@ Successively, we have to define the *InfectionValuesGeneration* in
 
 Notice that the value (or values) generated are temporarily saved in a
 file named as the corresponding name in the *Functions\_list*, in this
-case *Infection*. Hence, the file *transition.cpp* has to be modified in
-order to read and use the value generated from the R function
-*InfectionValuesGeneration*. An example of implementation is the
-following, where two functions are defined: (1) *read\_constant()* in
-order to read the generated value, which is associated with the right
-variable, and (2) *init\_data\_structures()* in order to read the file
-only the first time that the function is called.
+case *Infection*.
 
-
-    static double Flag = -1; 
-    static double Infection_rate = 1.428;
-
-    void read_constant(string fname, double& Infection_rate)
-    {
-        ifstream f (fname);
-        string line;
-        if(f.is_open())
-        {
-            int i = 1;
-            while (getline(f,line))
-            {
-                switch(i)
-                {
-                    case 1:
-                        Infection_rate = stod(line);
-                        //cout << "p" << i << ": " << line << "\t" << p1 << endl;
-                        break;
-                }
-                ++i;
-            }
-            f.close();
-        }
-        else
-        {
-            std::cerr<<"\nUnable to open " << fname << 
-                    ": file do not exists\": file do not exists\n";
-            exit(EXIT_FAILURE);
-        }
-    }
-
-    void init_data_structures()
-    {
-        read_constant("./Infection", Infection_rate);
-        Flag = 1; 
-
-    }
-
-    double InfectionFunction(double *Value,
-                             map <string,int>& NumTrans,
-                             map <string,int>& NumPlaces,
-                             const vector<string> & NameTrans,
-                             const struct InfTr* Trans,
-                             const int T,
-                             const double& time)
-    {
-
-        // Definition of the function exploited to calculate the rate,
-        // in this case for semplicity we define it throught the Mass Action  law
-     
-        if( Flag == -1)   init_data_structures();
-     
-        double intensity = 1.0;
-        
-        for (unsigned int k=0; k<Trans[T].InPlaces.size(); k++)
-        {
-            intensity *= pow(Value[Trans[T].InPlaces[k].Id],Trans[T].InPlaces[k].Card);
-        }
-        
-        double rate = Infection_rate * intensity;
-
-        return(rate);
-    }
 
 ### Calibration analysis
 
