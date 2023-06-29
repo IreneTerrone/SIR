@@ -250,10 +250,10 @@ written by the user on a file. It takes as parameters:
 As showed in figure , where the delay (i.e., the rate) is set as **Call["InfectionFunction"]**
 
 
-<img src="./Images/SIR_call_readme.png" alt="\label{fig:SIR_PN_general} Petri Net representation of the SIR model, modelling the Infection transition as a general transition." width="1625" />
+<img src="./Images/SIR_Call_FromList.png" alt="\label{fig:SIR_PN_general} Petri Net representation of the SIR model, modelling the Infection transition as a general transition." width="1625" />
 <p class="caption">
 Petri Net representation of the SIR model, modelling the Infection
-transition as a general transition.
+transition with an external function and the additional parameter as FromList.
 </p>
 
 Then, we have to properly define a C++ function implementing the
